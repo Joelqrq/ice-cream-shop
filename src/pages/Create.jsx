@@ -16,9 +16,9 @@ import Typography from "@material-ui/core/Typography";
 import { useHistory } from "react-router-dom";
 import Snackbar from "@material-ui/core/Snackbar";
 import { MessageAlert } from "../components/MessageAlert";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 export const Create = (props) => {
-  
   const history = useHistory();
   const [snackbarState, setSnackbarState] = useState({});
   const handleClose = (event, reason) => {
@@ -29,9 +29,14 @@ export const Create = (props) => {
     setSnackbarState({ state: false });
   };
 
+  const navigateBack = () => {
+    history.push("/");
+  };
+
   return (
     <StyledCreate>
       <Paper elevation={3} className="card">
+        <ArrowBackIcon className="back-arrow" onClick={navigateBack} />
         <Typography
           variant="h5"
           component="h1"
@@ -120,8 +125,16 @@ const StyledCreate = styled.div`
   height: 100vh;
 
   .card {
+    position: relative;
     width: 45ch;
     padding: 2rem;
+  }
+
+  .back-arrow {
+    position: absolute;
+    margin-top: 0.25rem;
+    margin-left: 2rem;
+    cursor: pointer;
   }
 
   .title {

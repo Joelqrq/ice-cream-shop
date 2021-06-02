@@ -18,6 +18,7 @@ import Typography from "@material-ui/core/Typography";
 import { useHistory } from "react-router-dom";
 import Snackbar from "@material-ui/core/Snackbar";
 import { MessageAlert } from "../components/MessageAlert";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 export const Edit = (props) => {
   const location = useLocation();
@@ -32,11 +33,16 @@ export const Edit = (props) => {
     setSnackbarState({ state: false });
   };
 
+  const navigateBack = () => {
+    history.push("/");
+  };
+
   return product === null ? (
     <Redirect to="/" />
   ) : (
     <StyledEdit>
       <Paper elevation={3} className="card">
+        <ArrowBackIcon className="back-arrow" onClick={navigateBack} />
         <Typography
           variant="h5"
           component="h1"
@@ -104,14 +110,16 @@ export const Edit = (props) => {
                   type="button"
                   variant="contained"
                   endIcon={<DeleteForeverIcon />}
-                  onClick={() => (async () => {
-                    const result = await deleteProduct(product);
-                    if (result.result) history.push("/", result.message);
-                    setSnackbarState({
-                      state: !result.result,
-                      message: result.message,
-                    });
-                  })()}
+                  onClick={() =>
+                    (async () => {
+                      const result = await deleteProduct(product);
+                      if (result.result) history.push("/", result.message);
+                      setSnackbarState({
+                        state: !result.result,
+                        message: result.message,
+                      });
+                    })()
+                  }
                 >
                   Delete
                 </DeleteButton>
@@ -142,8 +150,16 @@ const StyledEdit = styled.div`
   height: 100vh;
 
   .card {
+    position: relative;
     width: 45ch;
     padding: 2rem;
+  }
+
+  .back-arrow {
+    position: absolute;
+    margin-top: 0.25rem;
+    margin-left: 2rem;
+    cursor: pointer;
   }
 
   .title {
