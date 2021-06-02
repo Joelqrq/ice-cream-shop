@@ -1,7 +1,10 @@
 import React from "react";
+import { Switch, Route, Redirect } from "react-router-dom";
 import styled from "styled-components";
 import { Create } from "../pages/Create";
 import { Edit } from "../pages/Edit";
+import { LandingPage } from "../pages/LandingPage";
+import { AuthRoute } from "./AuthRoute";
 
 const StyledContentLayout = styled.section`
   display: block;
@@ -13,8 +16,20 @@ const StyledContentLayout = styled.section`
 export const ContentLayout = () => {
   return (
     <StyledContentLayout>
-      <Create />
-      <Edit />
+      <Switch>
+        <AuthRoute exact path="/">
+          <LandingPage/>
+        </AuthRoute>
+        <AuthRoute exact path="/create">
+          <Create />
+        </AuthRoute>
+        <AuthRoute path="/edit">
+          <Edit/>
+        </AuthRoute>
+        <Route path="/*">
+            <Redirect to="/" />
+        </Route>
+      </Switch>
     </StyledContentLayout>
   );
 };
