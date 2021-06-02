@@ -14,8 +14,10 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Snackbar from "@material-ui/core/Snackbar";
 import { MessageAlert } from "../components/MessageAlert";
+import { redirectToLogin } from "../services/auth";
 
 export const LandingPage = () => {
+
   const [snackbarState, setSnackbarState] = useState({});
   const handleSnackBarClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -45,7 +47,7 @@ export const LandingPage = () => {
 
   useEffect(() => {
     setSnackbarState({
-      state: location.state,
+      state: location.state !== undefined,
       message: location.state,
     });
 
@@ -53,10 +55,13 @@ export const LandingPage = () => {
     const fetchProducts = async () => {
       if (!didCancel) {
         const res = await read();
-        if (res.result) {
+        if (redirectToLogin(res.status, res.message, location.pathname, history)) return;
+
+        if (res.products) {
           setProducts(res.products);
+          return;
         }
-        setResult({ state: !res.result, message: res.message });
+        setResult({ state: true, message: res.message });
       }
     };
 
@@ -65,7 +70,7 @@ export const LandingPage = () => {
     return () => {
       didCancel = true;
     };
-  }, [location.state]);
+  }, [location, history]);
 
   return products.length === 0 && !result.message ? (
     <StyledLandingPage>
@@ -107,7 +112,9 @@ export const LandingPage = () => {
           <TableBody>
             {products.length === 0 ? (
               <TableRow key="no">
-                <TableCell align="center" colSpan={4}>No ice creams in database</TableCell>
+                <TableCell align="center" colSpan={4}>
+                  No ice creams in database
+                </TableCell>
               </TableRow>
             ) : (
               products.map((product) => (

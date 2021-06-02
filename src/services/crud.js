@@ -1,67 +1,72 @@
 import { instance } from "./axios.config";
+import { userStore } from "../stores/user.store";
 
 export const create = async (values) => {
-  let result = false;
   const res = await instance
-    .post("/products/create", values)
+    .post("/products/create", values, {
+      headers: {
+        Authorization: userStore.user.accessToken,
+      },
+    })
     .then((res) => {
-      result = true;
       return res.data;
     })
     .catch((err) => {
-      result = false;
       return err.response.data;
     });
-  return { result: result, message: res.message };
+  return res;
 };
 
 export const read = async () => {
-  let result = false;
   const res = await instance
-    .get("/products/read")
+    .get("/products/read", {
+      headers: {
+        Authorization: userStore.user.accessToken,
+      },
+    })
     .then((res) => {
-      result = true;
       return res.data;
     })
     .catch((err) => {
-      result = false;
       return err.response.data;
     });
-  return { result: result, products: res.products, message: res.message };
+
+  return res;
 };
 
 export const update = async (id, values) => {
-  let result = false;
   const product = {
     id: id,
     ...values,
   };
   const res = await instance
-    .put("/products/update", product)
+    .put("/products/update", product, {
+      headers: {
+        Authorization: userStore.user.accessToken,
+      },
+    })
     .then((res) => {
-      result = true;
       return res.data;
     })
     .catch((err) => {
-      result = false;
       return err.response.data;
     });
-  return { result: result, message: res.message };
+  return res;
 };
 
 export const deleteProduct = async ({ id, name }) => {
-  let result = false;
   const res = await instance
     .delete("/products/delete", {
+      headers: {
+        Authorization: userStore.user.accessToken,
+      },
       data: { id: id, name: name },
     })
     .then((res) => {
-      result = true;
       return res.data;
     })
     .catch((err) => {
-      result = false;
       return err.response.data;
     });
-  return { result: result, message: res.message };
+  return res;
 };

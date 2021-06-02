@@ -19,6 +19,7 @@ import { useHistory } from "react-router-dom";
 import Snackbar from "@material-ui/core/Snackbar";
 import { MessageAlert } from "../components/MessageAlert";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import { redirectToLogin } from "../services/auth";
 
 export const Edit = (props) => {
   const location = useLocation();
@@ -61,11 +62,21 @@ export const Edit = (props) => {
           }}
           validationSchema={createSchema}
           onSubmit={async (values) => {
-            const result = await update(product.id, values);
-            if (result.result) history.push("/", result.message);
+            const res = await update(product.id, values);
+            if (
+              redirectToLogin(
+                res.status,
+                res.message,
+                location.pathname,
+                history
+              )
+            )
+              return;
+
+            if (res.status === 200) history.push("/", res.message);
             setSnackbarState({
-              state: !result.result,
-              message: result.message,
+              state: true,
+              message: res.message,
             });
           }}
         >
@@ -112,11 +123,21 @@ export const Edit = (props) => {
                   endIcon={<DeleteForeverIcon />}
                   onClick={() =>
                     (async () => {
-                      const result = await deleteProduct(product);
-                      if (result.result) history.push("/", result.message);
+                      const res = await deleteProduct(product);
+                      if (
+                        redirectToLogin(
+                          res.status,
+                          res.message,
+                          location.pathname,
+                          history
+                        )
+                      )
+                        return;
+
+                      if (res.status === 200) history.push("/", res.message);
                       setSnackbarState({
-                        state: !result.result,
-                        message: result.message,
+                        state: true,
+                        message: res.message,
                       });
                     })()
                   }

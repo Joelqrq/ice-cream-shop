@@ -17,9 +17,11 @@ import { useHistory } from "react-router-dom";
 import Snackbar from "@material-ui/core/Snackbar";
 import { MessageAlert } from "../components/MessageAlert";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import { redirectToLogin } from "../services/auth";
 
 export const Create = (props) => {
   const history = useHistory();
+
   const [snackbarState, setSnackbarState] = useState({});
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -55,11 +57,12 @@ export const Create = (props) => {
           }}
           validationSchema={createSchema}
           onSubmit={async (values) => {
-            const result = await create(values);
-            if (result.result) history.push("/", result.message);
+            const res = await create(values);
+            if (redirectToLogin(res.status, res.message, history.location.pathname, history)) return;
+            if (res.status === 201) history.push("/", res.message);
             setSnackbarState({
-              state: !result.result,
-              message: result.message,
+              state: true,
+              message: res.message,
             });
           }}
         >
